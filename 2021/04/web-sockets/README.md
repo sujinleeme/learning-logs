@@ -6,7 +6,8 @@
 <img src="./internet-protocol.png " alt="The Internet protocols suite with four layers"/>
 
 __HTTP transaction lifecycle__
-> What's the process happened when you hit google.com on browser?
+
+[What happens when you type google.com into your browser and press enter?](https://github.com/alex/what-happens-when#http-protocol)
 
 1. Browser uses TCP/IP protocol, provided by the Operating System, to connect to www.google.com server (DNS routing happens here)
 2. Browser sends HTTP request to the server using connection made in previous step.
@@ -84,8 +85,8 @@ Websocket Chat Demo : https://socket.io/demos/chat
 #### References
 
 1. [MDN - WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
-2. [A Beginner's Guide to WebSockets - Dion Misic](https://www.youtube.com/watch?v=8ARodQ4Wlf4)
-3. [What are WebSockets | How is it different from HTTP? - Tech Primers
+2. [Javascript.info - WebSocket](https://javascript.info/websocket)
+3. [TCP/IP Network Administratio by Craig Hunt](https://www.oreilly.com/library/view/tcpip-network-administration/0596002971/ch01.html)
+4. [A Beginner's Guide to WebSockets by Dion Misic](https://www.youtube.com/watch?v=8ARodQ4Wlf4)
+5. [What are WebSockets | How is it different from HTTP? by Tech Primers
 ](https://www.youtube.com/watch?v=i5OVcTdt_OU)
-4. [Javascript.info - WebSocket](https://javascript.info/websocket)
-4. [TCP/IP Network Administration, 3rd Edition by Craig Hunt](https://www.oreilly.com/library/view/tcpip-network-administration/0596002971/ch01.html)
