@@ -28,7 +28,7 @@ Check google dev tool > Headers > General
 
 Asynchronously send data to server without refreshing
 
-<img src="https://stephencox.net/blog/_intro-ajax/fig1.jpg" />
+<img src="./ajax.png" alt="AJAX diagram"/>
 
 ### WebSockets
 
