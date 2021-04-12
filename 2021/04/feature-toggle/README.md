@@ -4,7 +4,7 @@
 
 A feature toggle (also feature switch, feature flag, feature gate, feature flipper, conditional feature, etc.) is a technique in software development that attempts to provide an alternative to maintaining multiple branches in source code (known as feature branches), such that a software feature can be tested even before it is completed and ready for release. A feature toggle is used to hide, enable or disable the feature during runtime. For example, during the development process, a developer can enable the feature for testing and disable it for other users.[^1]
 
-### Why it is good?
+## Why it is good?
 
 Including pending or incomplete code?
 
@@ -22,7 +22,7 @@ Including pending or incomplete code?
 * Feature toggle: Continuous integration. All pending changes are checked into the main branch. Each check-in is pended until an automated build process builds all code from the main branch on a build server, and successfully runs automated BVTs.
 * Feature Branch: All development is checked into the associated feature branch and isolated from code in the main branch or other feature branches. You can’t merge a new or enhanced feature with the main branch or other feature branches until the feature is Code Complete, passes required quality tests or meets the DoD.
 
-## When we do consider?
+## When we do consider using Feature Toggle?
 
 * Hiding or disabling new features in the UI
 * Hiding or disabling new components in the application
@@ -32,12 +32,27 @@ Including pending or incomplete code?
 * Adding a new feature to an existing application
 * Enhancing an existing feature in an existing application
 
-## Toggle Configuration
+## Feature Toggle Configuration in React App
 
-This is a summary that I did for feature toggle task in an React Application.
+This is an example code and summary that I did for feature toggle task in a React Application.
 
+Let's say, we want to make the Comment Module using a feature flag.
 
-1. Set a new environment variable `COMMENT_FEATURE_ENABLED` in yaml files.
+In the entry point of Comment module file, it has the below of code lines.
+
+```tsx
+export const Comments = {
+  routeComponents: {
+    main: CommentRoutes,
+  };
+  name: MODULE_NAME,
+  sagas: [],
+  listeningEvents: [],
+};
+```
+
+1. Env configuration
+Set a new environment variable `COMMENT_FEATURE_ENABLED` in yaml files.
 
 In `integration.yaml`:
 
@@ -95,7 +110,7 @@ In `App.tsx`
   feature="comments"
   path="/feature-a"
   exact={true}
-  component={componentA} />
+  component={Comments.component} />
 ```
 
 3. Sagas, Reducers, listeningEvents..
