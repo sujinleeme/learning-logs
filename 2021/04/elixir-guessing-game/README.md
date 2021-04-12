@@ -1,4 +1,4 @@
-# Elixir Guessing Game
+# Alchemist Camp - Elixir Guessing Game
 
 [Alchemist Camp](https://alchemist.camp/) - [Lesson 1: The guessing game](https://alchemist.camp/episodes/guessing-game
 )
@@ -18,6 +18,10 @@ Tell user our guess
   anything else -> tell user to enter a valid response
 
 Challenge: See if you can make a program that asks the user's name and then greets them by name... and has a special response for users who enter your name.
+
+### Example
+
+Start with `GuessingGame.main()`.
 
 ```elixir
 defmodule GuessingGame do
@@ -103,6 +107,23 @@ defmodule GuessingGame do
   def smaller(low, high) do
     new_high = max(low, mid(low, high) - 1)
     guess(low, new_high)
+  end
+end
+```
+
+`greeter.ex`
+
+```elixir
+defmodule Greeter do
+  @author "Mark"
+  def start do
+    name = IO.gets("Hi there! What's your name?\n") |> String.trim
+
+    if name == @author do
+      "Wow! #{@author} is my favorite name. I was programmed by someone named #{@author}!"
+    else
+      "Hi, #{name}. It's nice to meet you."
+    end
   end
 end
 ```
