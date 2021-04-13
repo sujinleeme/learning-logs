@@ -2,7 +2,7 @@
 
 ## What's Feature Toggle
 
-A feature toggle (also feature switch, feature flag, feature gate, feature flipper, conditional feature, etc.) is a technique in software development that attempts to provide an alternative to maintaining multiple branches in source code (known as feature branches), such that a software feature can be tested even before it is completed and ready for release. A feature toggle is used to hide, enable or disable the feature during runtime. For example, during the development process, a developer can enable the feature for testing and disable it for other users.[^1]
+A feature toggle (also feature switch, feature flag, feature gate, feature flipper, conditional feature, etc.) is a technique in software development that attempts to provide an alternative to maintaining multiple branches in source code (known as feature branches), such that a software feature can be tested even before it is completed and ready for release. A feature toggle is used to hide, enable or disable the feature during runtime. For example, during the development process, a developer can enable the feature for testing and disable it for other users.
 
 ## Why it is good?
 
@@ -34,25 +34,43 @@ Including pending or incomplete code?
 
 ## Feature Toggle Configuration in React App
 
-This is an example code and summary that I did for feature toggle task in a React Application.
+This is an example code and summary that I did for feature toggle task in a React application.
 
-Let's say, we want to make the Comment Module using a feature flag.
+Let's assume that we want to enable `Comments` feature using a feature toggle in staging only.
 
-In the entry point of Comment module file, it has the below of code lines.
+Each module consists of module's `name`, `routeComponents`, `reducer`, and `sagas` properties.
+
+```ts
+export type Module<
+  S,
+  A extends Action<any>,
+  RouteComponentKeys extends string
+> = {
+  name: string;
+  routeComponents: ComponentsConfig<RouteComponentKeys>;
+  reducer?: Reducer<S, A>;
+  // tslint:disable: no-any
+  sagas: any[];
+};
+```
+
+In the entry point of `Comments` module file, it has the below of code lines.
 
 ```tsx
+
+export const MODULE_NAME = 'comments';
+
 export const Comments = {
   routeComponents: {
     main: CommentRoutes,
   };
   name: MODULE_NAME,
   sagas: [],
-  listeningEvents: [],
 };
 ```
 
 1. Env configuration
-Set a new environment variable `COMMENT_FEATURE_ENABLED` in yaml files.
+First of all, we need to set a new environment variable, `COMMENT_FEATURE_ENABLED` in all yaml files where it set values that need to be configurable during deployment.
 
 In `integration.yaml`:
 
@@ -63,7 +81,7 @@ deployment:
     - ....
       env:
         - name: COMMENT_FEATURE_ENABLED
-          value: true
+          value: false
 ```
 
 In `staging.yaml`:
@@ -80,7 +98,7 @@ deployment:
 
 2. Router configuration
 
-Create `FeatureProtectedRoute` component to enable/disable router based on env.
+I created `FeatureProtectedRoute` component to enable/disable router based on env variable.
 
 ```tsx
 import React from 'react';
@@ -97,105 +115,108 @@ interface FeatureProtectedRouteProps {
 export const FeatureProtectedRoute:  React.FC<FeatureProtectedRouteProps & RouteProps> = (
   { feature, ...routeProps }) => {
   const isEnabled = !!featureFlags[feature as keyof typeof featureFlags];
-  console.log(featureName, process.env);
   return (!isEnabled) ?  <></> : <Route {...routeProps} />;
 };
 ```
 
-In `App.tsx`
+As like basic `<Route />`, `<FeatureProtectedRoute>` can take all props and render `<Route />` or  empty `<></>`. Only thing that we do care is `feature` prop which points environment variable name.
 
 ```tsx
-<Route path="/" component={main.component} />
-<FeatureProtectedRoute
-  feature="comments"
-  path="/feature-a"
-  exact={true}
-  component={Comments.component} />
+import { WorkSpace } from './WorkSpace';
+import { Comments } from './Comments';
+
+<Switch>
+  <Route path="/" component={WorkSpace.routeComponents.main} />
+  <FeatureProtectedRoute
+    feature="comments"
+    path="/comments"
+    exact={true}
+    component={Comments.routeComponents.main} />
+<Switch>
 ```
 
-3. Sagas, Reducers, listeningEvents..
+3. Sagas, Reducers.
+
+Finally, we can manage reduces and sagas based on feature flags.
 
 ```tsx
+import { AnyAction, Reducer } from 'redux';
 import { ModuleA, ModuleB, ModuleC, Comments } from './modules';
 
-const unprotectedModules = [
+// tslint:disable-next-line: no-any
+import { Saga } from 'redux-saga';
+
+//...
+
+type ModuleItem = Module<any, any, any, never> & {
+  env?: string;
+};
+
+enum PartKey {
+  sagas = 'sagas',
+}
+
+const modules: ModuleItem[] = [
   moduleA,
   moduleB,
   moduleC,
 ];
 
-const protectedModules = [{
-  ...Comments,
-  env: process.env.COMMENT_FEATURE_ENABLED,
-}];
+const protectedModules = [
+  {
+    ...packagesMall,
+    env: process.env.TAX_MALL_FEATURE_ENABLED,
+  },
+];
 
-type ModuleItem = Module & {
-  env?: string;
-};
-
-interface ActiveModulesArgs {
-  unprotectedModules: ModuleItem[];
-  protectedModules: ModuleItem[];
-  type: {
-    name: 'sagas' | 'listeningEvents';
-    initialValue: any;
-  };
-}
-
-const getActiveModules = ({ unprotectedModules, protectedModules, type }: ActiveModulesArgs) => {
-  const { name, initialValue } = type;
-  const moduleFeatures = unprotectedModules.reduce((prev: any[], current) => {
-    return [
-      ...prev,
-      ...current[name],
-    ];
+const getActiveModules = (
+  modules: ModuleItem[],
+  protectedModules: ModuleItem[],
+  partKey: PartKey,
+): Saga[] => {
+  const moduleFeatures = modules.reduce((prev: Saga[], current: ModuleItem) => {
+    return [...prev, ...current[partKey]];
   }, []);
 
-  const flaggedModuleFeatures = protectedModules.reduce((prev: any[], current) => {
+  const flaggedModuleFeatures = protectedModules.reduce((prev: Saga[], current: ModuleItem) => {
     const { env } = current;
-    const feature = env ? current[name] : initialValue;
-    return [
-      ...prev,
-      ...feature,
-    ];
+    if (!env || current[partKey]) {
+      return prev;
+    }
+    return [...prev, ...current[partKey]];
   }, []);
 
   return [...moduleFeatures, ...flaggedModuleFeatures];
 };
 
-interface ActiveReducersArgs {
-  unprotectedModules: ModuleItem[];
-  protectedModules: ModuleItem[];
-}
+const getActiveReducers = (
+  modules: ModuleItem[],
+  protectedModules: ModuleItem[],
+): {
+  [key: string]: Reducer;
+} => {
+  const moduleFeatures = modules.reduce((prev, { name, reducer }) => {
+    if (!reducer) {
+      return prev;
+    }
 
-const getActiveReducers = ({ unprotectedModules, protectedModules }: ActiveReducersArgs) => {
-  // tslint:disable-next-line: no-any
-  const moduleFeatures = unprotectedModules.reduce((prev, current) => {
     return {
       ...prev,
-      [current.name]: current.reducer,
+      [name]: reducer,
     };
   }, {});
 
-  // tslint:disable-next-line: no-any
-  const flaggedModuleFeatures = protectedModules.reduce((prev, current) => {
-    const { env } = current;
+  const flaggedModuleFeatures = protectedModules.reduce((prev, { env, name, reducer }) => {
+    if (!env || reducer) {
+      return prev;
+    }
+
     return {
       ...prev,
-      [current.name]: env ? current.reducer : undefined,
+      [name]: reducer,
     };
   }, {});
   return { ...moduleFeatures, ...flaggedModuleFeatures };
-};
-
-export default {
-  name: 'allModules',
-  sagas: getActiveModules({ protectedModules, unprotectedModules,
-    type: { name: 'sagas', initialValue: [] }}),
-  listeningEvents: getActiveModules({ protectedModules, unprotectedModules,
-    type: { name: 'listeningEvents', initialValue: [] }}),
-  reducer: getActiveReducers({ protectedModules, unprotectedModules }),
-  rootComponent: app.routeComponents.main,
 };
 ```
 

@@ -117,10 +117,10 @@ end
 defmodule Greeter do
   @author "Mark"
   def start do
-    name = IO.gets("Hi there! What's your name?\n") |> String.trim
+    name = IO.gets("Hi, there! What's your name\n") |> String.trim()
 
     if name == @author do
-      "Wow! #{@author} is my favorite name. I was programmed by someone named #{@author}!"
+      "Wow! #{@author} is my favorite name. I was programmed by saome named #{@author}!"
     else
       "Hi, #{name}. It's nice to meet you."
     end
