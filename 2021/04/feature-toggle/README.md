@@ -38,15 +38,20 @@ This is an example code and summary that I did for feature toggle task in a Reac
 
 Let's assume that we want to enable `Comments` feature using a feature toggle in staging only.
 
-Each module consists of module's `name`, `routeComponents`, `reducer`, and `sagas` properties.
+Each module consists of module's `name`, `routeComponents`, `components`, `reducer`, and `sagas` properties.
 
 ```ts
+type ComponentsConfig<ComponentsKeys extends string> = {
+  [key in ComponentsKeys]: React.FC<any> | React.ComponentClass<any, any>;
+};
+
 export type Module<
   S,
   A extends Action<any>,
   RouteComponentKeys extends string
 > = {
   name: string;
+  components: ComponentsConfig<ComponentsKeys>;
   routeComponents: ComponentsConfig<RouteComponentKeys>;
   reducer?: Reducer<S, A>;
   // tslint:disable: no-any
@@ -56,14 +61,17 @@ export type Module<
 
 In the entry point of `Comments` module file, it has the below of code lines.
 
-```tsx
+```javascript
+import { CommentsContainer } './comments.container';
 
-export const MODULE_NAME = 'comments';
+const MODULE_NAME = 'comments';
 
 export const Comments = {
+  reducer,
   routeComponents: {
     main: CommentRoutes,
   };
+  components: {},
   name: MODULE_NAME,
   sagas: [],
 };
