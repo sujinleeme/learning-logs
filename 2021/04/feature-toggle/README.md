@@ -175,12 +175,15 @@ const getActiveModules = (
   partKey: PartKey,
 ): Saga[] => {
   const moduleFeatures = modules.reduce((prev: Saga[], current: ModuleItem) => {
+    if (!current[partKey]) {
+      return prev;
+    }
     return [...prev, ...current[partKey]];
   }, []);
 
   const flaggedModuleFeatures = protectedModules.reduce((prev: Saga[], current: ModuleItem) => {
     const { env } = current;
-    if (!env || current[partKey]) {
+    if (!env || !current[partKey]) {
       return prev;
     }
     return [...prev, ...current[partKey]];
@@ -207,7 +210,7 @@ const getActiveReducers = (
   }, {});
 
   const flaggedModuleFeatures = protectedModules.reduce((prev, { env, name, reducer }) => {
-    if (!env || reducer) {
+    if (!env || !reducer) {
       return prev;
     }
 
