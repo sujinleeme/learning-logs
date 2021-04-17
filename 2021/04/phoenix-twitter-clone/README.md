@@ -16,8 +16,9 @@ Phoenix LiveView generators
 
 ### Hands-On
 
-1. Create project with `mix phx.new chirp --live`.
-2. Create LiveView context with `mix phx.gen.live Timeline Post posts username body likes_count:integer reposts_count:integer`
+Create project with `mix phx.new chirp --live`.
+
+Create LiveView context with `mix phx.gen.live Timeline Post posts username body likes_count:integer reposts_count:integer`
 3. Copy router content in console and paste in `router.ex`.
 
 ```elixir
@@ -35,7 +36,7 @@ With ecto you get some new mix tasks to your project to deal with the database. 
 * `mix ecto.migrate` - runs the pending migrations for your repository
 * `mix ecto.drop` - drops the database
 
-4. Go to `chirp_web/live/post_live/form_component.html.leex` and change form element.
+Go to `chirp_web/live/post_live/form_component.html.leex` and change form element.
 
 ```elixir
 <h2><%= @title %></h2>
@@ -128,10 +129,9 @@ end
 
 Install `fontawesome` and `file-loader` dependencies.
 
-Go to `assets` and run `
-`yarn add @fortawesome/fontawesome-free file-loader` and check dependencies in `package.json`.
+Go to `assets` and install dependencies with `yarn add @fortawesome/fontawesome-free file-loader`. Check dependencies in `package.json`.
 
-Create `_custom.scss` in css and change css styling.
+Create `_custom.scss` file under `assets/css` and add some styling.
 
 ```css
 /* Fontawesome 5 config */
@@ -161,7 +161,7 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 }
 ```
 
-Import _custom.scss and fontawesome-free libs in `app.scss`.
+Import `_custom.scss` file and fontawesome-free libs in `app.scss`.
 
 ```scss
 @import "custom";
@@ -187,9 +187,9 @@ Go to `webpack.config.js` add file loader config.
         },
 ```
 
-Broadcast events if the new post is created/changed.
+Next we need to broadcast events if the new post is created/changed.
 
-Go to `lib/chirp/timeline.ex` and update `create_post` and `update_post` with `broadcast(:post_created)`
+Go to `lib/chirp/timeline.ex` and update `create_post` and `update_post` with `broadcast(:post_created)`.
 
 ```elixir
   def create_post(attrs \\ %{}) do
@@ -238,9 +238,9 @@ In the same file, update socket and posts, add new post in existing posts.
   end
 ```
 
-Next, open two browsers and create a post. Check the other browser update post list instantly.
+Open two browsers and create a post. Check the other browser update post list instantly.
 
-How to sort post list.
+Now, it needs to sort post list.
 
 Go to `lib/chirp/timeline.ex` and modify `list_posts` to sort list in descending order by `id`.
 
