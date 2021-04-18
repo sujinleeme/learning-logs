@@ -334,3 +334,7 @@ Add `inc_likes` and `inc_reposts` in `timeline.ex`.
     broadcast({:ok, post}, :post_updated)
   end
   ```
+
+## More tutorials
+
+[Phoenix LiveView Counter Tutorial](https://github.com/dwyl/phoenix-liveview-counter-tutorial)
