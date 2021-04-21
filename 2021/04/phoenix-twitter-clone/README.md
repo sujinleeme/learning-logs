@@ -6,20 +6,22 @@ Build a real-time Twitter clone in 15 minutes with LiveView and Phoenix 1.5
 [[Video]](https://www.phoenixframework.org/blog/build-a-real-time-twitter-clone-in-15-minutes-with-live-view-and-phoenix-1-5), [[Code]](https://github.com/dersnek/chirp)
 
 ### Phoenix v1.5
+
 Phoenix LiveDashboard
-* Real-time performance monitoring and debugging tool (focus on production data)
-* Streaming request logger
+
+- Real-time performance monitoring and debugging tool (focus on production data)
+- Streaming request logger
 
 Phoenix LiveView generators
-* `mix phx.new [project_name] --live` : include everything you need to get up and running developing with LiveView
-*  `phx.gen.live` generator for boostrapping CRUD LiveView context/interfaces similar to `phx.gen.html/phx.gen.json`. 
+
+- `mix phx.new [project_name] --live` : include everything you need to get up and running developing with LiveView
+- `phx.gen.live` generator for boostrapping CRUD LiveView context/interfaces similar to `phx.gen.html/phx.gen.json`.
 
 ### Hands-On
 
 Create project with `mix phx.new chirp --live`.
 
-Create LiveView context with `mix phx.gen.live Timeline Post posts username body likes_count:integer reposts_count:integer`
-3. Copy router content in console and paste in `router.ex`.
+Create LiveView context with `mix phx.gen.live Timeline Post posts username body likes_count:integer reposts_count:integer` 3. Copy router content in console and paste in `router.ex`.
 
 ```elixir
   live "/posts", PostLive.Index, :index
@@ -32,9 +34,9 @@ Create LiveView context with `mix phx.gen.live Timeline Post posts username body
 
 With ecto you get some new mix tasks to your project to deal with the database. They might help you:
 
-* `mix ecto.create` - create the database which is used by your repository as backend
-* `mix ecto.migrate` - runs the pending migrations for your repository
-* `mix ecto.drop` - drops the database
+- `mix ecto.create` - create the database which is used by your repository as backend
+- `mix ecto.migrate` - runs the pending migrations for your repository
+- `mix ecto.drop` - drops the database
 
 Go to `chirp_web/live/post_live/form_component.html.leex` and change form element.
 
@@ -145,7 +147,7 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 .post {
   margin: 10px 100px;
   padding: 10px 20px;
-  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.1);
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
 }
 
 .post-avatar {
@@ -283,10 +285,10 @@ Go to `live/post_live/index.html.leex` and tag a post container with `phx-update
 
 The following `phx-update` values are supported:
 
-* `replace` - the default operation. Replaces the element with the contents
-* `ignore` - ignores updates to the DOM regardless of new content changes
-* `append` - append the new DOM contents instead of replacing
-* `prepend` - prepend the new DOM contents instead of replacing
+- `replace` - the default operation. Replaces the element with the contents
+- `ignore` - ignores updates to the DOM regardless of new content changes
+- `append` - append the new DOM contents instead of replacing
+- `prepend` - prepend the new DOM contents instead of replacing
 
 To implement like and repost click event, open `post_component.ex` and add `phx-click` and `phx-target` tags in all button elements.
 
@@ -333,8 +335,14 @@ Add `inc_likes` and `inc_reposts` in `timeline.ex`.
 
     broadcast({:ok, post}, :post_updated)
   end
-  ```
+```
+
+### How to change
 
 ## More tutorials
 
 [Phoenix LiveView Counter Tutorial](https://github.com/dwyl/phoenix-liveview-counter-tutorial)
+
+This inline anonymous function syntax: https://elixir-lang.org/crash-course.html#partials-and-function-captures-in-elixir
+
+`&(&1 + 1)` is a shorthand way of writing `fn val -> val + 1 end`. The `&()` is the same as `fn ... end` (where the `...` is the function definition).

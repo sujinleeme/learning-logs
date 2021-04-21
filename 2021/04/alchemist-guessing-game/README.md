@@ -1,7 +1,6 @@
 # Alchemist Camp - Elixir Guessing Game
 
-[Alchemist Camp](https://alchemist.camp/) - [Lesson 1: The guessing game](https://alchemist.camp/episodes/guessing-game
-)
+[Alchemist Camp](https://alchemist.camp/) - [Lesson 1: The guessing game](https://alchemist.camp/episodes/guessing-game)
 
 ## Exercise
 
@@ -9,13 +8,13 @@ Guess between a low number and a high -> guess middle number
 
 Tell user our guess
 
-  "yes" -> game over
+"yes" -> game over
 
-  "bigger" -> bigger(low, high)
-  
-  "smaller" -> smaller(low, high)
-  
-  anything else -> tell user to enter a valid response
+"bigger" -> bigger(low, high)
+
+"smaller" -> smaller(low, high)
+
+anything else -> tell user to enter a valid response
 
 Challenge: See if you can make a program that asks the user's name and then greets them by name... and has a special response for users who enter your name.
 
@@ -110,6 +109,8 @@ defmodule GuessingGame do
   end
 end
 ```
+
+## Challenge
 
 `greeter.ex`
 
