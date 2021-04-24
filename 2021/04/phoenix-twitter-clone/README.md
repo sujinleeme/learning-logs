@@ -337,8 +337,6 @@ Add `inc_likes` and `inc_reposts` in `timeline.ex`.
   end
 ```
 
-### How to change
-
 ## More tutorials
 
 [Phoenix LiveView Counter Tutorial](https://github.com/dwyl/phoenix-liveview-counter-tutorial)
