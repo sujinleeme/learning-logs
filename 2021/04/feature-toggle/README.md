@@ -103,18 +103,19 @@ import React from 'react';
 import { Route, RouteProps } from 'react-router-dom';
 
 const featureFlags = {
-  comments : process.env.COMMENTS_FEATURE_ENABLED,
+  comments : process.env.COMMENTS_FEATURE_ENABLED === 'true',
 };
 
 interface FeatureProtectedRouteProps {
   feature: keyof typeof featureFlags;
 }
 
-export const FeatureProtectedRoute:  React.FC<FeatureProtectedRouteProps & RouteProps> = (
-  { feature, ...routeProps }) => {
-  const isEnabled = !!featureFlags[feature as keyof typeof featureFlags];
-  return (!isEnabled) ?  <></> : <Route {...routeProps} />;
-};
+export const FeatureProtectedRoute: React.FC<FeatureProtectedRouteProps & RouteProps> = ({
+  featureName,
+  ...routeProps
+}) => {
+  const isEnabled = featureFlags[featureName as keyof typeof featureFlags];
+  return isEnabled ? <Route {...routeProps} /> : <></>;
 ```
 
 As like basic `<Route />`, `<FeatureProtectedRoute>` can take all props and render `<Route />` or  empty `<></>`. Only thing that we do care is `feature` prop which points environment variable name.
@@ -147,7 +148,7 @@ import { Saga } from 'redux-saga';
 //...
 
 type ModuleItem = Module<any, any, any, never> & {
-  env?: string;
+  enabled?: boolean;
 };
 
 enum PartKey {
@@ -163,7 +164,7 @@ const modules: ModuleItem[] = [
 const protectedModules: ModuleItem[] = [
   {
     ...Comments,
-    env: process.env.COMMENT_FEATURE_ENABLED
+    enabled: process.env.COMMENT_FEATURE_ENABLED === 'true',
   },
 ];
 
@@ -180,8 +181,8 @@ const getActiveModules = (
   }, []);
 
   const flaggedModuleFeatures = protectedModules.reduce((prev: Saga[], current: ModuleItem) => {
-    const { env } = current;
-    if (!env || !current[partKey]) {
+    const { enabled } = current;
+    if (!enabled || !current[partKey]) {
       return prev;
     }
     return [...prev, ...current[partKey]];
@@ -207,8 +208,8 @@ const getActiveReducers = (
     };
   }, {});
 
-  const flaggedModuleFeatures = protectedModules.reduce((prev, { env, name, reducer }) => {
-    if (!env || !reducer) {
+  const flaggedModuleFeatures = protectedModules.reduce((prev, { enabled, name, reducer }) => {
+    if (!enabled || !reducer) {
       return prev;
     }
 
