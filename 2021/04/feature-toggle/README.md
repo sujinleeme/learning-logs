@@ -79,9 +79,9 @@ export const Comments = {
 
 ### Set environment variables
 
-First of all, export a new environment variable before running the project locally. e.g) `export COMMENTS_FEATURE_ENABLED=true`. Set a new environment variable in both `integration.yaml` and `staging.yaml` files where it set values that need to be configurable during deployment.. Ideally, its value should be boolean.
+First of all, export a new environment variable before running the project locally. e.g) `export COMMENTS_FEATURE_ENABLED="true"`. Set a new environment variable in both `integration.yaml` and `staging.yaml` files where it set values that need to be configurable during deployment.. Ideally, its value should be `"true"` or `"false"`.
 
-e.g)
+e.g) integration.yaml
 
 ```yaml
 deployment:
@@ -91,12 +91,25 @@ deployment:
       env:
         // other envs....
         - name: COMMENTS_FEATURE_ENABLED
-          value: false
+          value: "false"
+```
+
+e.g) staging.yaml
+
+```yaml
+deployment:
+  replicas: 1
+  containers:
+    - name: app
+      env:
+        // other envs....
+        - name: COMMENTS_FEATURE_ENABLED
+          value: "true"
 ```
 
 ### Router configuration
 
-I created `FeatureProtectedRoute` component to enable/disable router based on env variable.
+I created `FeatureProtectedRoute` component to enable/disable router based on env variable condition.
 
 ```tsx
 import React from 'react';
