@@ -8,29 +8,29 @@ A feature toggle (also feature switch, feature flag, feature gate, feature flipp
 
 Including pending or incomplete code?
 
-* To prevent developers' work from impacting the rest of the team or destabilizing the codebase.
-* Increases a team’s development speed by reducing or eliminating the need for parallel development branches and the ensuing branching and merging tasks, which can be extremely time-consuming and error-prone.
-* Using feature toggles with continuous integration, you work directly in the main branch. Code is checked in to the main branch, while keeping this branch stable for builds and deployments.
-* Gives runtime isolation of a feature being developed until it’s complete, tested and ready for release.
+- To prevent developers' work from impacting the rest of the team or destabilizing the codebase.
+- Increases a team’s development speed by reducing or eliminating the need for parallel development branches and the ensuing branching and merging tasks, which can be extremely time-consuming and error-prone.
+- Using feature toggles with continuous integration, you work directly in the main branch. Code is checked in to the main branch, while keeping this branch stable for builds and deployments.
+- Gives runtime isolation of a feature being developed until it’s complete, tested and ready for release.
 
-*Cautions*
+_Cautions_
 
-* Savvy teams view their Feature Toggles as inventory which comes with a carrying cost, and work to keep that inventory as low as possible.
+- Savvy teams view their Feature Toggles as inventory which comes with a carrying cost, and work to keep that inventory as low as possible.
 
 ## Feature Toggle vs. Feature Branch
 
-* Feature toggle: Continuous integration. All pending changes are checked into the main branch. Each check-in is pended until an automated build process builds all code from the main branch on a build server, and successfully runs automated BVTs.
-* Feature Branch: All development is checked into the associated feature branch and isolated from code in the main branch or other feature branches. You can’t merge a new or enhanced feature with the main branch or other feature branches until the feature is Code Complete, passes required quality tests or meets the DoD.
+- Feature toggle: Continuous integration. All pending changes are checked into the main branch. Each check-in is pended until an automated build process builds all code from the main branch on a build server, and successfully runs automated BVTs.
+- Feature Branch: All development is checked into the associated feature branch and isolated from code in the main branch or other feature branches. You can’t merge a new or enhanced feature with the main branch or other feature branches until the feature is Code Complete, passes required quality tests or meets the DoD.
 
 ## When we do consider using Feature Toggle?
 
-* Hiding or disabling new features in the UI
-* Hiding or disabling new components in the application
-* Versioning an interface
-* Extending an interface
-* Supporting multiple versions of a component
-* Adding a new feature to an existing application
-* Enhancing an existing feature in an existing application
+- Hiding or disabling new features in the UI
+- Hiding or disabling new components in the application
+- Versioning an interface
+- Extending an interface
+- Supporting multiple versions of a component
+- Adding a new feature to an existing application
+- Enhancing an existing feature in an existing application
 
 ## Feature Toggle Configuration in React App
 
@@ -45,11 +45,7 @@ type ComponentsConfig<ComponentsKeys extends string> = {
   [key in ComponentsKeys]: React.FC<any> | React.ComponentClass<any, any>;
 };
 
-export type Module<
-  S,
-  A extends Action<any>,
-  RouteComponentKeys extends string
-> = {
+export type Module<S, A extends Action<any>, RouteComponentKeys extends string> = {
   name: string;
   components: ComponentsConfig<ComponentsKeys>;
   routeComponents: ComponentsConfig<RouteComponentKeys>;
@@ -131,7 +127,7 @@ export const FeatureProtectedRoute: React.FC<FeatureProtectedRouteProps & RouteP
   return isEnabled ? <Route {...routeProps} /> : <></>;
 ```
 
-As like basic `<Route />`, `<FeatureProtectedRoute>` can take all props and render `<Route />` or  empty `<></>`. Only thing that we do care is `feature` prop which points environment variable name.
+As like basic `<Route />`, `<FeatureProtectedRoute>` can take all props and render `<Route />` or empty `<></>`. Only thing that we do care is `feature` prop which points environment variable name.
 
 ```tsx
 import { WorkSpace } from './WorkSpace';
@@ -149,14 +145,14 @@ import { Comments } from './Comments';
 
 ### Sagas, Reducers
 
-Finally, we can manage reduces and sagas based on feature flags. 
+Finally, we can manage reduces and sagas based on feature flags.
 
 ```tsx
-import { AnyAction, Reducer } from 'redux';
-import { ModuleA, ModuleB, ModuleC, Comments } from './modules';
+import {AnyAction, Reducer} from "redux";
+import {ModuleA, ModuleB, ModuleC, Comments} from "./modules";
 
 // tslint:disable-next-line: no-any
-import { Saga } from 'redux-saga';
+import {Saga} from "redux-saga";
 
 //...
 
@@ -165,26 +161,22 @@ type ModuleItem = Module<any, any, any, never> & {
 };
 
 enum PartKey {
-  sagas = 'sagas',
+  sagas = "sagas",
 }
 
-const modules: ModuleItem[] = [
-  moduleA,
-  moduleB,
-  moduleC,
-];
+const modules: ModuleItem[] = [moduleA, moduleB, moduleC];
 
 const protectedModules: ModuleItem[] = [
   {
     ...Comments,
-    enabled: process.env.COMMENT_FEATURE_ENABLED === 'true',
+    enabled: process.env.COMMENT_FEATURE_ENABLED === "true",
   },
 ];
 
 const getActiveModules = (
   modules: ModuleItem[],
   protectedModules: ModuleItem[],
-  partKey: PartKey,
+  partKey: PartKey
 ): Saga[] => {
   const moduleFeatures = modules.reduce((prev: Saga[], current: ModuleItem) => {
     if (!current[partKey]) {
@@ -194,7 +186,7 @@ const getActiveModules = (
   }, []);
 
   const flaggedModuleFeatures = protectedModules.reduce((prev: Saga[], current: ModuleItem) => {
-    const { enabled } = current;
+    const {enabled} = current;
     if (!enabled || !current[partKey]) {
       return prev;
     }
@@ -206,11 +198,11 @@ const getActiveModules = (
 
 const getActiveReducers = (
   modules: ModuleItem[],
-  protectedModules: ModuleItem[],
+  protectedModules: ModuleItem[]
 ): {
   [key: string]: Reducer;
 } => {
-  const moduleFeatures = modules.reduce((prev, { name, reducer }) => {
+  const moduleFeatures = modules.reduce((prev, {name, reducer}) => {
     if (!reducer) {
       return prev;
     }
@@ -221,7 +213,7 @@ const getActiveReducers = (
     };
   }, {});
 
-  const flaggedModuleFeatures = protectedModules.reduce((prev, { enabled, name, reducer }) => {
+  const flaggedModuleFeatures = protectedModules.reduce((prev, {enabled, name, reducer}) => {
     if (!enabled || !reducer) {
       return prev;
     }
@@ -231,12 +223,11 @@ const getActiveReducers = (
       [name]: reducer,
     };
   }, {});
-  return { ...moduleFeatures, ...flaggedModuleFeatures };
+  return {...moduleFeatures, ...flaggedModuleFeatures};
 };
 
-
 export default {
-  name: 'allModules',
+  name: "allModules",
   sagas: getActiveModules(modules, protectedModules, PartKey.sagas),
   listeningEvents: getActiveModules(modules, protectedModules, PartKey.listeningEvents),
   reducer: getActiveReducers(modules, protectedModules),
